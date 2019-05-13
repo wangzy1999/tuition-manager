@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>尚美画室学生信息管理系统</title>
+    <h1 style="font-family: STXingkai;margin: -25px 0px 0px 200px;font-size:45px">尚美画室学生信息管理系统</h1>
+    <style type="text/css">
+        ul{
+            font-size:17px;
+            color:rgb(128, 13, 13);
+            background:613030;
+            height:15px;
+            width:1300px;
+            font-family: STSong;
+         }
+
+    </style>
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+
+
+        <div id="nav">
+            <div id="inner-nav">
+                <a href="{{url_for('addstu')}}">增加学员    </a>             
+                <a href="{{url_for('searchstu')}}">查找学生 </a>
+                <a href="{{url_for('altstu')}}">学员缴费    </a>
+                <a href="{{url_for('delstu')}}">删除学员    </a>
+            </div>
+        </div>
+    </head>
+<body bgcolor="FFDCB9">
+<form action="{{url_for('altstu')}}" method="post">
+    <table style="margin-left:20.2%;">
+        <tbody>
+            <tr>
+                <td style="font-size:20px;font-family: youyuan;">请输入学生姓名:</td>
+                <td><input type="text" placehoder="请输入学生姓名" name="name">
+                </td>
+            </tr>
+            <tr>
+                <td style="font-size:20px;font-family: youyuan;">请输入缴费金额:</td>
+                <td><input type="text" placehoder="请输入缴费金额" name="fee">
+                </td>
+            </tr>
+            <tr>
+                <td style="font-size:20px;font-family: youyuan;">请输入对应月数:</td>
+                <td><input type="text" placehoder="请输入对应月数" name="yueshu">
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input class="bttn-pill bttn-md bttn-primary" type="submit" value="确定"></td>
+            </tr>
+        </tbody>
+    </table>
+</form>
+<br/>
+{%if change%}
+该生目前信息为{{change}}
+
+{%endif%}
+<br/>
+<div id="inner-nav1">
+    <a href="{{url_for('index')}}">回到首页</a>
+</div>
+</body>
+</html>
