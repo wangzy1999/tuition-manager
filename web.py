@@ -1,5 +1,5 @@
 from flask import Flask, request, url_for, render_template, redirect
-from dataHandle import sql_insert, sql_select, connect_db, close_db, show_data, logic_del, total
+from dataHandle import sql_insert, sql_select, connect_db, close_db, show_data, logic_del, total, find_guoqi
 import json
 import sqlite3
 import datetime
@@ -116,6 +116,14 @@ def searchstu():
             return render_template('searchstu.html', find=find)
     return render_template('searchstu.html', student='')
 
+@app.route('/guoqistu', methods=['GET', 'POST'])
+def guoqistu():
+    student = find_guoqi()
+    if student == None or student == []:
+        student = ["lack of data"]
+    print(student)
+    return render_template('guoqistu.html', find=student)
+
 
 if __name__ == '__main__':
     '''
@@ -132,4 +140,4 @@ if __name__ == '__main__':
     except Exception as e:
         pass
     con.close()
-    app.run(host='0.0.0.0', port='80')
+    app.run(host='0.0.0.0', port='80', debug=True)

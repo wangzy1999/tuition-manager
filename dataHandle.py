@@ -3,6 +3,7 @@
 
 import sqlite3
 import json
+import datetime
 
 
 def connect_db():
@@ -76,6 +77,25 @@ def show_data():
 			.replace("{", '').replace('}', '').replace(',', '--'), i[3], i[4])
         result.append(text)
         j+=1
+    return result
+
+def find_guoqi():
+    con, cur = connect_db()
+    cur.execute("select *from STU where state!='gunle'")
+    data = cur.fetchall()
+    close_db(con, cur)
+    now_time = datetime.datetime.now()
+    now_time_str = str(now_time.strftime('%Y-%m-%d'))
+    result = []
+    j=1
+    for i in data:
+        value = json.loads(i[2])
+        daoqi_time_str = value.get('到期时间', 0)
+        text = str(j) + "--姓名:%s --%s --上次缴费:%s --状态:%s"%(i[1], str(value).replace("'", '')\
+			.replace("{", '').replace('}', '').replace(',', '--'), i[3], i[4])
+        if daoqi_time_str<=now_time_str:
+            result.append(text)
+            j+=1
     return result
 
 
