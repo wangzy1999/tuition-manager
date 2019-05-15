@@ -13,7 +13,6 @@ body {
 }
 #nav{
 	width: 70%;
-	background: url(/static/avout.jpg);
 	height: 165px;
 	left: 0;
 	top: 0;
@@ -22,7 +21,7 @@ body {
 	/*text-align: center;*/
 }
 #inner-nav{
-	width: 1000px;
+	width: 1200px;
 	margin: 1000 auto;
 	text-decoration: none;
 	text-align: left;
@@ -32,7 +31,7 @@ body {
 #inner-nav a{
 	margin:59px 0px 0px 75px;
 	text-decoration: none;
-	color: rgb(199, 202, 206);
+	color: rgb(92, 92, 92);
 	font-size: 24px;
 	display: inline-block;
 	height: 50px;
@@ -74,6 +73,11 @@ input:focus{
 		-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
 		box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6)
 }
+#gengxin{
+	place-content:'请输入确定更新';
+
+}
+
 
 .bttn-xs {
 	color: #17a19a;

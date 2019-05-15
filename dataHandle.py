@@ -45,9 +45,9 @@ def total():
         value = json.loads(i[2])
         fee += int(value.get("总缴费", 0))
         yueshu = int(value.get('剩余月数', 0))
-        shengyu_fee = int(value.get('剩余学费', 0))
+        left_fee = int(value.get('剩余学费', 0))
         if yueshu != 0:
-            benyue += shengyu_fee/yueshu
+            benyue += left_fee/yueshu
     return total, fee, int(benyue)
 
 
@@ -63,7 +63,27 @@ def sql_select(name):
 			.replace("{", '').replace('}', '').replace(',', '--'), i[3], i[4])
     return text
 
-
+def pass_month():
+    con, cur = connect_db()
+    cur.execute("select *from STU where state!='gunle'")
+    data = cur.fetchall()
+    for i in data:
+        name = i[1]
+        value = json.loads(i[2])
+        left_fee = int(value.get('剩余学费', 0))
+        left_yue = int(value.get('剩余月数', 0))
+        if left_yue != 0:
+            left_fee = left_fee-left_fee/left_yue
+            left_yue -= 1
+            value.update({
+            '剩余学费':left_fee, '剩余月数':left_yue
+        })
+            value = json.dumps(value)
+            cur.execute("update STU set value=? where name=?",(value, name,))
+        if left_yue == 0:
+            pass
+    con.commit()
+    close_db(con, cur)
 def show_data():
     con, cur = connect_db()
     cur.execute("select *from STU where state!='gunle'")
@@ -111,3 +131,4 @@ def close_db(con, cur):
     # close database
     cur.close()
     con.close()
+

@@ -1,13 +1,16 @@
 from flask import Flask, request, url_for, render_template, redirect
-from dataHandle import sql_insert, sql_select, connect_db, close_db, show_data, logic_del, total, find_guoqi
+from dataHandle import sql_insert, sql_select, connect_db, close_db, show_data, logic_del, total, find_guoqi, pass_month
 import json
 import sqlite3
 import datetime
 app = Flask(__name__)
 
 
-@app.route('/')  # 这里是根目录，也就是打开链接第一个访问的页面
+@app.route('/')  # 根目录
 def index():
+    """
+    主页
+    """
     student = show_data()
     if student == None or student == []:
         student = ["lack of data"]
@@ -124,6 +127,16 @@ def guoqistu():
     print(student)
     return render_template('guoqistu.html', find=student)
 
+@app.route('/amonth', methods=['GET', 'POST'])
+def amonth():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        if name == '确定更新':
+            pass_month()
+            result = 'success'
+            return render_template('amonth.html', result=result)
+    return render_template('amonth.html', result='')
+
 
 if __name__ == '__main__':
     '''
@@ -140,4 +153,4 @@ if __name__ == '__main__':
     except Exception as e:
         pass
     con.close()
-    app.run(host='0.0.0.0', port='80', debug=True)
+    app.run(host='0.0.0.0', port='8088', debug=True)
