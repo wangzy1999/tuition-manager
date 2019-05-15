@@ -3,8 +3,11 @@
 
 使用方法:
 git clone https://github.com/wangzy1999/tuition-manager
+
 pip install flask
+
 python web.py
+
 访问本地80端口即可
 
 or
