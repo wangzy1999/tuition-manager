@@ -1,6 +1,6 @@
 body {
 	background: url(/static/background.jpg) no-repeat;
-	margin: 10% 0%;
+	margin: 6% 0%;
 	background-position: center;
 	background-attachment: fixed;
 	background-size: 100% 100%;
@@ -12,8 +12,9 @@ body {
 
 }
 #nav{
-	width: 70%;
-	height: 165px;
+	width: 100%;
+	background-color: rgba(196, 190, 190, 0.795);
+	height: 55px;
 	left: 0;
 	top: 0;
 	position: fixed;
@@ -22,16 +23,16 @@ body {
 }
 #inner-nav{
 	width: 1200px;
-	margin: 1000 auto;
+	margin: 0 0 0 0px;
 	text-decoration: none;
 	text-align: left;
 	height: 50px;
 	line-height: 50px;
 }
 #inner-nav a{
-	margin:59px 0px 0px 75px;
+	margin:5px 0px 0px 40px;
 	text-decoration: none;
-	color: rgb(92, 92, 92);
+	color: rgb(68, 68, 68);
 	font-size: 24px;
 	display: inline-block;
 	height: 50px;
@@ -44,13 +45,25 @@ text-decoration:underline;
 	font-family: STXingkai;
 }
 #inner-nav1 a{
-	margin:0px 0px 0px 450px;
+	margin:0px 0px 0px 650px;
 	text-decoration: none;
 	color: rgb(18, 145, 124);
 	font-size: 24px;
 	display: inline-block;
 	height: 50px;
 	font-family: STLiti;
+}
+#inner-nav2 a{
+	margin:0px 0px 0px 660px;
+	text-decoration: none;
+	color: rgb(25, 160, 160);
+	font-size: 23px;
+	display: inline-block;
+	height: 50px;
+	font-family: STLiti;
+}
+#inner-nav2 a:hover{
+	text-decoration:underline;
 }
 #inner-nav1 a:hover{
 	text-decoration:underline;
@@ -72,10 +85,6 @@ input:focus{
 		outline: 0;
 		-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
 		box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6)
-}
-#gengxin{
-	place-content:'请输入确定更新';
-
 }
 
 

@@ -1,54 +1,81 @@
-from flask import Flask, request, url_for, render_template, redirect
-from dataHandle import sql_insert, sql_select, connect_db, close_db, show_data, logic_del, total, find_guoqi, pass_month
+from flask import Flask, request, url_for, render_template, redirect, abort, flash, session
+from dataHandle import sql_insert, sql_select, connect_db, close_db, show_data, real_del, statistic, find_expiry, pass_month
 import json
 import sqlite3
 import datetime
 app = Flask(__name__)
+app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 
 
-@app.route('/')  # 根目录
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        if request.form['username'] != 'shangmei' or \
+                request.form['password'] != '127101':
+            error = '用户名/密码错误'
+        else:
+            session['username'] = request.form['username']
+            return redirect(url_for('index'))
+    return render_template('login.html', error=error)
+
+
+@app.route('/logout', methods=['GET', 'POST'])
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('index'))
+    
+@app.route('/')
 def index():
     """
-    主页
+    主页 显示统计学生信息
     """
-    student = show_data()
-    if student == None or student == []:
-        student = ["lack of data"]
-    total_num, total_fee,benyue = total()
-    return render_template('index.html', student=student, total=total_num, fee=total_fee, benyue=benyue)
+    if 'username' in session:
+        student = show_data()
+        if student == None or student == []:
+            student = ["缺少学生数据"]
+        amount, total_income, instant_income = statistic()
+        return render_template('index.html', student=student, amount=amount, total_income=total_income, instant_income=instant_income)
+    else:
+        return redirect(url_for('login'))
 
 
-@app.route('/delstu', methods=['GET', 'POST'])  # 这里是删除模块，对应的页面是/delstu
+@app.route('/delstu', methods=['GET', 'POST'])
 def delstu():
+    """
+    删除模块(物理删除)
+    """
     if request.method == 'POST':
         name = request.form.get('name')
-        print(name)
-        if sql_select(name) == []:
+        if sql_select(name) == []: #如果无该生信息
             return '该生不存在'
         else:
-            logic_del(name)  
-            return render_template('delstu.html', result=name)# 如果找到了输入的学号执行删除操作，并重定向到首页
+            real_del(name)   #物理删除该省信息
+            return render_template('delstu.html', rm_name=name)
     return render_template('delstu.html')
 
 
-@app.route('/addstu', methods=['GET', 'POST'])  # 这里是添加模块
+@app.route('/addstu', methods=['GET', 'POST'])
 def addstu():
+    """
+    添加模块(姓名;学费信息[年纪、电话、地址、到期时间、总缴费、剩余学费、剩余月数];上次缴费时间;状态)
+    """
     if request.method == 'POST':
         name = request.form.get('name')  # 单独入库
-        grade = request.form.get('grade')
-        phone = request.form.get('phone')
-        address = request.form.get('address')
-        fee = request.form.get('fee')  # 本次缴费 不入库
+        grade = request.form.get('grade') #value 入库
+        phone = request.form.get('phone') #value 入库
+        address = request.form.get('address') #value 入库
+        fee = request.form.get('fee')  # 本次缴费 以last单独入库
         ruxue_time = datetime.datetime.now()  # 登记时间 不入库
-        daoqi_time = ruxue_time  # 到期时间
-        all_fee = 0  # 所有缴费
-        yueshu = int(request.form.get('yueshu'))  # 月数
+        daoqi_time = ruxue_time  # 到期时间 #value 入库
+        all_fee = 0  # 总缴费 #value 入库
+        yueshu = int(request.form.get('yueshu'))  # 剩余月数 value 入库
         days = yueshu*30
-        last = '无记录'
-        benyue_fee = 0
+        last = '无记录' # 单独入库
+        left_fee = 0 #剩余学费 value入库
         if fee != '':
             all_fee += int(fee)
-            benyue_fee += int(fee)
+            left_fee += int(fee)
             last = str(ruxue_time.strftime('%Y-%m-%d')) + "金额:" + fee  # 单独入库
             if days == 0:
                 return "请输入学费对应的月数"
@@ -59,17 +86,20 @@ def addstu():
             return "您输入的姓名已存在"
         else:
             keys = ['年纪', '电话', '地址','到期时间', '总缴费', '剩余学费', '剩余月数']
-            values = [grade, phone, address, daoqi_time, all_fee, benyue_fee, yueshu]
+            values = [grade, phone, address, daoqi_time, all_fee, left_fee, yueshu]
             value = dict(zip(keys, values))
             value = json.dumps(value)
             state = '在学'
             sql_insert(name, value, last, state)
-            return redirect(url_for('index'))
-    return render_template('addstu.html')  # 添加成功则重定向到首页
+            return redirect(url_for('index')) # 添加成功则重定向到首页
+    return render_template('addstu.html')
 
 
-@app.route('/altstu', methods=['GET', 'POST'])  # 缴费模块
+@app.route('/altstu', methods=['GET', 'POST'])
 def altstu():
+    """
+    缴费模块
+    """
     if request.method == 'POST':
         name = request.form.get('name') #姓名
         fee = int(request.form.get('fee')) #缴费金额
@@ -109,33 +139,47 @@ def altstu():
 
 @app.route('/searchstu', methods=['GET', 'POST'])
 def searchstu():
+    """
+    查找信息模块
+    """
     if request.method == 'POST':
         name = request.form.get('name')
         if sql_select(name) == []:
             return '没有您要找的学生'
         else:
             find = sql_select(name)
-            # 如果找到了学号，把该学生信息传给html
             return render_template('searchstu.html', find=find)
     return render_template('searchstu.html', student='')
 
 @app.route('/guoqistu', methods=['GET', 'POST'])
 def guoqistu():
-    student = find_guoqi()
+    """
+    查找到期的学生
+    """
+    student = find_expiry()
     if student == None or student == []:
         student = ["lack of data"]
     print(student)
     return render_template('guoqistu.html', find=student)
 
-@app.route('/amonth', methods=['GET', 'POST'])
-def amonth():
+@app.route('/update', methods=['GET', 'POST'])
+def update():
+    """
+    更新一个月的数据
+    """
     if request.method == 'POST':
-        name = request.form.get('name')
-        if name == '确定更新':
+        passwd = request.form.get('passwd')
+        if passwd == '127101':
             pass_month()
             result = 'success'
-            return render_template('amonth.html', result=result)
-    return render_template('amonth.html', result='')
+            return render_template('update.html', result=result)
+    return render_template('update.html', result='')
+
+"""
+@app.route('/notfound', methods=['GET', 'POST'])
+def notfound():
+    return render_template('index.html'), 404
+"""
 
 
 if __name__ == '__main__':

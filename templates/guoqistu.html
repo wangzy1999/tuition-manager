@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>尚美画室学生信息管理系统</title>
-    <h1 style="font-family: STXingkai;margin: -25px 0px 0px 200px;font-size:45px">尚美画室学生信息管理系统</h1>
+    <h1 style="font-family: STXingkai;margin: -25px 0px 0px 450px;font-size:45px;color:rgb(51, 51, 51);">尚美画室学生信息管理系统</h1>
     <style type="text/css">
         ul{
             font-size:17px;
@@ -20,12 +20,13 @@
 
         <div id="nav">
             <div id="inner-nav">
+                <a href="{{url_for('index')}}">首页</a>
                 <a href="{{url_for('addstu')}}">增加学员    </a>             
                 <a href="{{url_for('searchstu')}}">查找学生 </a>
                 <a href="{{url_for('altstu')}}">学员缴费    </a>
                 <a href="{{url_for('delstu')}}">删除学员    </a>
                 <a href="{{url_for('guoqistu')}}">到期学员    </a>
-                <a href="{{url_for('amonth')}}">每月更新    </a>
+                <a href="{{url_for('update')}}">每月更新    </a>
             </div>
         </div>
     </head>
